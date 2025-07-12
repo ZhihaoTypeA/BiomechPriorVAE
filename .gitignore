@@ -1,0 +1,6 @@
+# ignore training data file
+data/
+
+#ignore py cache
+__pycache__/
+*.pyc
