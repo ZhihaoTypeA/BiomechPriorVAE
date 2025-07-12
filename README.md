@@ -14,4 +14,4 @@ Contains the main python scripts for data convertion and model training, as well
 - **`vaemodel.py`** - Interface for using VAE model in Matlab
 
 ### 2.result
-Contains the VAE model trained using PyTorch
+Contains the VAE model trained using PyTorch and saved StandardScaler

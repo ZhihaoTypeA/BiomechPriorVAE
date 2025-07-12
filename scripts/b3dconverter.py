@@ -104,9 +104,9 @@ class B3DConverter:
 
 
 if __name__ == "__main__":
-    b3d_file = "/home/kishgard/projects/Addbiomechanics/data/Dataset/Hammer2013_Formatted_With_Arm/subject01/subject01.b3d"
+    b3d_file = "../data/Dataset/Hammer2013_Formatted_With_Arm/subject01/subject01.b3d"
     output_file = "joint_positions.npy"
-    geometry_path = "/home/kishgard/projects/Addbiomechanics/data/Geometry/"
+    geometry_path = "../data/Geometry/"
 
     #kinematic pass is 0
     processing_pass = 0

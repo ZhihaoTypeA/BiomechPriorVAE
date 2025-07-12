@@ -56,9 +56,9 @@ def load_data(data_root_path, geometry_path, batch_size=64, train_split=0.8):
 
 
 #VAE network configuration    
-class BioPriorVAE(nn.Module):
+class BiomechPriorVAE(nn.Module):
     def __init__(self, num_dofs, latent_dim=32, hidden_dim=512):
-        super(BioPriorVAE, self).__init__()
+        super(BiomechPriorVAE, self).__init__()
 
         self.num_dofs = num_dofs
         self.latent_dim = latent_dim
@@ -120,9 +120,9 @@ def vae_loss(x, recon_x, mu, logvar, beta):
     return total_loss, recon_loss, kl_loss
 
 
-class BioPriorVAETrainer:
+class BiomechPriorVAETrainer:
     def __init__(self,
-                 model: BioPriorVAE,
+                 model: BiomechPriorVAE,
                  device = 'cuda' if torch.cuda.is_available() else 'cpu'):
         self.model = model.to(device)
         self.device = device
@@ -316,7 +316,7 @@ def train_model(
         train_split=0.8
 ):
     os.makedirs(output_path, exist_ok=True)
-    save_path = os.path.join(output_path, "BioPriorVAE_best.pth")
+    save_path = os.path.join(output_path, "BiomechPriorVAE_best.pth")
     scaler_path = os.path.join(output_path, "scaler.pkl")
 
     train_loader, val_loader, scaler = load_data(data_root_path=data_root_path, geometry_path=geometry_path, batch_size=batch_size, train_split=train_split)
@@ -324,8 +324,8 @@ def train_model(
         pickle.dump(scaler, f)
     print(f"Scaler saved to: {scaler_path}")
 
-    model = BioPriorVAE(num_dofs=num_dofs, latent_dim=latent_dim)
-    trainer = BioPriorVAETrainer(model=model)
+    model = BiomechPriorVAE(num_dofs=num_dofs, latent_dim=latent_dim)
+    trainer = BiomechPriorVAETrainer(model=model)
 
     trainer.train(
         train_loader=train_loader,
@@ -373,12 +373,12 @@ def test_model(
         scaler = pickle.load(f)
     print("Scaler loaded successfully!")
     
-    model = BioPriorVAE(num_dofs=num_dofs, latent_dim=latent_dim)
+    model = BiomechPriorVAE(num_dofs=num_dofs, latent_dim=latent_dim)
     device = 'cude' if torch.cuda.is_available() else 'cpu'
     model.load_state_dict(torch.load(model_path, map_location=device))
     print(f"Model loaded successfully on {device}!")
 
-    trainer = BioPriorVAETrainer(model=model, device=device)
+    trainer = BiomechPriorVAETrainer(model=model, device=device)
     print("\n" + "="*50)
     print("Starting visualize test sample...")
     print("="*50)
@@ -425,9 +425,9 @@ def visualize_result(model, trainer, val_loader, scaler):
 
 
 if __name__ == "__main__":
-    data_root_path = "/home/kishgard/projects/Addbiomechanics/data/Dataset/"
-    output_path = "/home/kishgard/projects/Addbiomechanics/result/model/"
-    geometry_path = "/home/kishgard/projects/Addbiomechanics/data/Geometry/"
+    data_root_path = "../data/Dataset"
+    output_path = "../result/model/"
+    geometry_path = "../data/Geometry/"
 
     mode = "train" #"train" or "test"
 
@@ -440,14 +440,14 @@ if __name__ == "__main__":
             latent_dim=20,
             batch_size=256,
             num_dofs=37,
-            num_epochs=50,
+            num_epochs=30,
             learning_rate=1e-3,
             train_split=0.8
         )
     
     elif mode == "test":
         print("Starting testing...")
-        model_path = os.path.join(output_path, "BioPriorVAE_best.pth")
+        model_path = os.path.join(output_path, "BiomechPriorVAE_best.pth")
         scaler_path = os.path.join(output_path, "scaler.pkl")
         model, trainer, scaler = test_model(
             data_root_path=data_root_path,
