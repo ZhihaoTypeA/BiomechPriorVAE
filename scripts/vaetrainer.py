@@ -374,8 +374,8 @@ def test_model(
     print("Scaler loaded successfully!")
     
     model = BiomechPriorVAE(num_dofs=num_dofs, latent_dim=latent_dim)
-    device = 'cude' if torch.cuda.is_available() else 'cpu'
-    model.load_state_dict(torch.load(model_path, map_location=device))
+    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    model.load_state_dict(torch.load(model_path, map_location=device, weights_only=True))
     print(f"Model loaded successfully on {device}!")
 
     trainer = BiomechPriorVAETrainer(model=model, device=device)

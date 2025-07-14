@@ -3,6 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
 import pickle
+from sklearn.preprocessing import StandardScaler
 import os
 
 #VAE network configuration    
@@ -106,17 +107,21 @@ class VAEModelWrapper:
     #Reconstruct the joint angle (with gradient w.r.t original scale)
     def reconstruct_withgrad(self, joint_angles):
             processed_angles = self._preprocess(joint_angles)
-            x = torch.tensor(processed_angles, dtype=torch.float32, requires_grad=True, device=self.device).unsqueeze(0)
+            x = torch.tensor(processed_angles, dtype=torch.float32, requires_grad=True, device=self.device)
+            if x.grad is not None:
+                x.grad.zero_()
 
-            rec_x, mu, logvar = self.model.forward(x)
+            x_batch = x.unsqueeze(0)
+            rec_x_batch, mu, logvar = self.model.forward(x_batch)
+            rec_x = rec_x_batch.squeeze(0)
             recon_loss = F.mse_loss(x, rec_x, reduction='sum')
             recon_loss.backward()
             #Get gradient (the x.grad here refers to the gradient w.r.t the scaled input, so we also need to get the gradient w.r.t the original input (according to the chain rule))
-            gradient = x.grad.squeeze(0).detach().cpu().numpy()
+            gradient = x.grad.detach().cpu().numpy()
             if self.scaler is not None:
                 gradient = gradient / self.scaler.scale_
 
-            rec_x_np = rec_x.squeeze(0).detach().cpu().numpy()
+            rec_x_np = rec_x.detach().cpu().numpy()
             output = self._postprocess(rec_x_np)
 
             return output, gradient
@@ -126,14 +131,19 @@ _vae_instance = None
 
 def initialize_vae(model_path, scaler_path, num_dofs=33, latent_dim=20, hidden_dim=512, device='cpu'):
     global _vae_instance
-    _vae_instance = VAEModelWrapper(
-        model_path=model_path,
-        scaler_path=scaler_path,
-        num_dofs=num_dofs,
-        latent_dim=latent_dim,
-        hidden_dim=hidden_dim,
-        device=device
-    )
+    try:
+        _vae_instance = VAEModelWrapper(
+            model_path=model_path,
+            scaler_path=scaler_path,
+            num_dofs=num_dofs,
+            latent_dim=latent_dim,
+            hidden_dim=hidden_dim,
+            device=device
+        )
+        return True
+    except Exception as e:
+        print(f"Failed to initialize VAE: {e}")
+        return False
 
 def reconstruct(joint_angles_np):
     global _vae_instance
