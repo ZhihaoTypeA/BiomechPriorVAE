@@ -6,9 +6,9 @@ import pickle
 import os
 
 #VAE network configuration    
-class BioPriorVAE(nn.Module):
+class BiomechPriorVAE(nn.Module):
     def __init__(self, num_dofs, latent_dim=32, hidden_dim=512):
-        super(BioPriorVAE, self).__init__()
+        super(BiomechPriorVAE, self).__init__()
 
         self.num_dofs = num_dofs
         self.latent_dim = latent_dim
@@ -65,7 +65,7 @@ class VAEModelWrapper:
     def __init__(self, model_path, scaler_path, num_dofs=37, latent_dim=20, hidden_dim=512, device='cpu'):
         self.device = device
 
-        self.model = BioPriorVAE(
+        self.model = BiomechPriorVAE(
             num_dofs=num_dofs,
             latent_dim=latent_dim,
             hidden_dim=hidden_dim
