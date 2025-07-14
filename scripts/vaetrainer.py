@@ -12,7 +12,7 @@ import time
 from tqdm import tqdm
 import pickle
 
-from b3dconverter import B3DConverter
+from b3dconverter import Gait3dB3DConverter
 from datavisualize import PoseVisualizer
 
 def load_data(data_root_path, geometry_path, batch_size=64, train_split=0.8):
@@ -28,7 +28,7 @@ def load_data(data_root_path, geometry_path, batch_size=64, train_split=0.8):
     print(f"Loaded {file_idx} data, ready for converting...")
 
     #Initialize data converter
-    converter = B3DConverter(geometry_path)
+    converter = Gait3dB3DConverter(geometry_path)
 
     all_data = []
     for datafile in all_datafile_path:
@@ -57,7 +57,7 @@ def load_data(data_root_path, geometry_path, batch_size=64, train_split=0.8):
 
 #VAE network configuration    
 class BiomechPriorVAE(nn.Module):
-    def __init__(self, num_dofs, latent_dim=32, hidden_dim=512):
+    def __init__(self, num_dofs, latent_dim=20, hidden_dim=512):
         super(BiomechPriorVAE, self).__init__()
 
         self.num_dofs = num_dofs
@@ -309,7 +309,7 @@ def train_model(
         output_path,
         latent_dim=20,
         batch_size=64,
-        num_dofs=37,
+        num_dofs=33,
         num_epochs=100,
         learning_rate=1e-3,
         beta=1.0,
@@ -358,7 +358,7 @@ def test_model(
         scaler_path,
         latent_dim=20,
         batch_size=64,
-        num_dofs=37,
+        num_dofs=33,
         train_split=0.8,
 ):
     if not os.path.exists(model_path):
@@ -439,7 +439,7 @@ if __name__ == "__main__":
             output_path=output_path,
             latent_dim=20,
             batch_size=256,
-            num_dofs=37,
+            num_dofs=33,
             num_epochs=30,
             learning_rate=1e-3,
             train_split=0.8
@@ -456,7 +456,7 @@ if __name__ == "__main__":
             scaler_path=scaler_path,
             latent_dim=20,
             batch_size=256,
-            num_dofs=37,
+            num_dofs=33,
             train_split=0.8,
         )
 

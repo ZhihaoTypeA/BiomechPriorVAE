@@ -62,7 +62,7 @@ class BiomechPriorVAE(nn.Module):
         return rec_x, mu, logvar
 
 class VAEModelWrapper:
-    def __init__(self, model_path, scaler_path, num_dofs=37, latent_dim=20, hidden_dim=512, device='cpu'):
+    def __init__(self, model_path, scaler_path, num_dofs=33, latent_dim=20, hidden_dim=512, device='cpu'):
         self.device = device
 
         self.model = BiomechPriorVAE(
@@ -124,7 +124,7 @@ class VAEModelWrapper:
 #Initialize a instance to get the result
 _vae_instance = None
 
-def initialize_vae(model_path, scaler_path, num_dofs=37, latent_dim=20, hidden_dim=512, device='cpu'):
+def initialize_vae(model_path, scaler_path, num_dofs=33, latent_dim=20, hidden_dim=512, device='cpu'):
     global _vae_instance
     _vae_instance = VAEModelWrapper(
         model_path=model_path,
