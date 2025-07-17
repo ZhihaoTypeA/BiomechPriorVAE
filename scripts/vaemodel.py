@@ -48,7 +48,6 @@ class BiomechPriorVAE(nn.Module):
         std = torch.exp(0.5 * logvar)
         eps = torch.randn_like(std)
         z = mu + eps * std
-
         return z
     
     def decode(self, x):
@@ -57,7 +56,9 @@ class BiomechPriorVAE(nn.Module):
 
     def forward(self, x):
         mu, logvar = self.encode(x)
-        z = self.reparameterize(mu, logvar)
+
+        # The wrapper is only used for inference, thus we make it deterministic instead of random.
+        z = mu
         rec_x = self.decode(z)
 
         return rec_x, mu, logvar
