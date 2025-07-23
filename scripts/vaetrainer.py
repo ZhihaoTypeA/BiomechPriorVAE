@@ -268,39 +268,42 @@ class BioPrioVAEVisualizer:
 
     def compare_poses(self, original_pose, recon_pose, original_port=8080, recon_port=8081):
         
-        def ori_visualize():
-            try:
-                self.ori_visualizer.visualize_pose(
-                    joint_position=original_pose,
-                    port=original_port
-                )
-            except Exception as e:
-                print(f"Error in visualize original pose: {e}")
+        # def ori_visualize():
+        #     try:
+        #         self.ori_visualizer.visualize_pose(
+        #             joint_position=original_pose,
+        #             port=original_port
+        #         )
+        #     except Exception as e:
+        #         print(f"Error in visualize original pose: {e}")
         
-        def rec_visualize():
-            try:
-                self.rec_visualizer.visualize_pose(
-                    joint_position=recon_pose,
-                    port=recon_port
-                )
-            except Exception as e:
-                print(f"Error in visualize reconstruction pose: {e}")
+        # def rec_visualize():
+        #     try:
+        #         self.rec_visualizer.visualize_pose(
+        #             joint_position=recon_pose,
+        #             port=recon_port
+        #         )
+        #     except Exception as e:
+        #         print(f"Error in visualize reconstruction pose: {e}")
 
-        print("\n-ORIGINAL POSE: localhost:8080")
-        print("-RECONSTRUCTED POSE: localhost:8081")
-        print("="*50)
-        ori_thread = threading.Thread(target=ori_visualize, daemon=True)
-        rec_thread = threading.Thread(target=rec_visualize, daemon=True)
+        # print("\n-ORIGINAL POSE: localhost:8080")
+        # print("-RECONSTRUCTED POSE: localhost:8081")
+        # print("="*50)
+        # ori_thread = threading.Thread(target=ori_visualize, daemon=True)
+        # rec_thread = threading.Thread(target=rec_visualize, daemon=True)
 
-        ori_thread.start()
+        # ori_thread.start()
+        # time.sleep(1)
+        # rec_thread.start()
+
+        # try:
+        #     while True:
+        #         time.sleep(1)
+        # except KeyboardInterrupt:
+        #     print("Visualization stopped")
+        self.ori_visualizer.visualize_pose(joint_position=original_pose, port=original_port)
         time.sleep(1)
-        rec_thread.start()
-
-        try:
-            while True:
-                time.sleep(1)
-        except KeyboardInterrupt:
-                print("Visualization stopped")
+        self.rec_visualizer.visualize_pose(joint_position=recon_pose, port=recon_port)
 
 
 def train_model(
@@ -429,7 +432,7 @@ if __name__ == "__main__":
     output_path = "../result/model/"
     geometry_path = "../data/Geometry/"
 
-    mode = "train" #"train" or "test"
+    mode = "test" #"train" or "test"
 
     if mode == "train":
         print("Starting training...")

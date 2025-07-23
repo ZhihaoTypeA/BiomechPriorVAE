@@ -1,6 +1,9 @@
 import nimblephysics as nimble
 import numpy as np
 import time
+from scipy.io import loadmat
+import os
+import threading
 
 class PoseVisualizer:
     def __init__(self):
@@ -68,6 +71,7 @@ class PoseVisualizer:
         self.skeleton.setPositions(joint_position)
 
     def visualize_pose(self, joint_position, port=8080):
+        joint_position = np.squeeze(joint_position)
         self.set_pose(joint_position)
 
         self.gui = nimble.NimbleGUI()
@@ -87,7 +91,7 @@ class PoseVisualizer:
 
         try:
             while True:
-                for i, positions in enumerate(joint_positions):
+                for i, positions in enumerate(joint_positions.T):
                     start_time = time.time()
 
                     self.set_pose(positions)
@@ -99,8 +103,52 @@ class PoseVisualizer:
         except KeyboardInterrupt:
             print("Animation stopped")
 
-if __name__ == "__main__":
-    test_pose_33 = np.random.uniform(-0.5, 0.5, 33)
+def mat_visualize(mat_path):
+    for filename in os.listdir(mat_path):
+        if filename.endswith(".mat"):
+            if filename.startswith('standingJoints'):
+                standing_path = os.path.join(mat_path, filename)
+            elif filename.startswith('runningJoints'):
+                running_path = os.path.join(mat_path, filename)
+            elif filename.startswith('curvedRunningJoints'):
+                curvedrunning_path = os.path.join(mat_path, filename)
+
+    standing_mat = loadmat(standing_path)
+    standingJoints = standing_mat['standingJoints'] #(33, 1)
+
+    #row10: knee_angle_r, row17: knee_angle_l
+    standingJoints_fix = standingJoints.copy()
+    standingJoints_fix[[9, 16], :] = -standingJoints_fix[[9, 16], :]
+
+    running_mat = loadmat(running_path)
+    runningJoints = running_mat['runningJoints'] #(33, 50)
+    runningJoints_fix = runningJoints.copy()
+    runningJoints_fix[[9, 16], :] = -runningJoints_fix[[9, 16], :]
+
+    curvedrunning_mat = loadmat(curvedrunning_path)
+    curvedRunningJoints = curvedrunning_mat['curvedRunningJoints'] #(33, 50)
+    curvedRunningJoints_fix = curvedRunningJoints.copy()
+    curvedRunningJoints_fix[[9, 16], :] = -curvedRunningJoints_fix[[9, 16], :]
     
+    # visualizer = PoseVisualizer()
+    # visualizer.visualize_pose(joint_position=standingJoints, port=8080)
+    # visualizer.animate_poses(joint_positions=runningJoints, port=8081)
+    # visualizer.animate_poses(joint_positions=curvedRunningJoints, port=8082)
+
+    visualizer = PoseVisualizer()
+    visualizer.visualize_pose(joint_position=standingJoints_fix, port=8080)
+    visualizer.animate_poses(joint_positions=runningJoints_fix, port=8081)
+    visualizer.animate_poses(joint_positions=curvedRunningJoints_fix, port=8082)
+
+if __name__ == "__main__":
+    #Test visualization
+    test_pose_33 = np.random.uniform(-0.5, 0.5, 33)
     visualizer = PoseVisualizer()
     visualizer.visualize_pose(joint_position=test_pose_33)
+
+    # #Mat visualization
+    # mat_path = "../result/mat/"
+    # mat_visualize(mat_path)
+
+
+
