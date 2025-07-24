@@ -103,6 +103,21 @@ class PoseVisualizer:
         except KeyboardInterrupt:
             print("Animation stopped")
 
+    def inspect_poses(self, joint_positions, port=8080):
+        self.gui = nimble.NimbleGUI()
+        self.gui.serve(port)
+
+        try:
+            while True:
+                for i, positions in enumerate(joint_positions.T):
+                    self.set_pose(positions)
+                    self.gui.nativeAPI().renderSkeleton(self.skeleton)
+                    input(f"frame:{i}, press 'Enter'' to continue...")
+                input("All frames were displayed, press 'Enter' to the first frame...")
+
+        except KeyboardInterrupt:
+            print("Animation stopped")
+
 def mat_visualize(mat_path):
     for filename in os.listdir(mat_path):
         if filename.endswith(".mat"):
@@ -141,14 +156,21 @@ def mat_visualize(mat_path):
     visualizer.animate_poses(joint_positions=curvedRunningJoints_fix, port=8082)
 
 if __name__ == "__main__":
-    #Test visualization
-    test_pose_33 = np.random.uniform(-0.5, 0.5, 33)
-    visualizer = PoseVisualizer()
-    visualizer.visualize_pose(joint_position=test_pose_33)
+    # #Test visualization
+    # test_pose_33 = np.random.uniform(-0.5, 0.5, 33)
+    # visualizer = PoseVisualizer()
+    # visualizer.visualize_pose(joint_position=test_pose_33)
 
-    # #Mat visualization
-    # mat_path = "../result/mat/"
-    # mat_visualize(mat_path)
+    #Mat visualization
+    mat_path = "../result/mat/"
+    mat_visualize(mat_path)
+
+    # #Latent space interpolation inspection
+    # data_path = '../result/model/latent_analysis/'
+    # interp_data_path = os.path.join(data_path, 'interpolated_poses.npy')
+    # interp_data = np.load(interp_data_path)
+    # visualizer = PoseVisualizer()
+    # visualizer.inspect_poses(interp_data.T)
 
 
 
