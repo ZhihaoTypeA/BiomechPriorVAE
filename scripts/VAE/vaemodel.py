@@ -171,7 +171,7 @@ class VAEModelWrapper:
         elif len(joint_angles) == 27:
             subset_joints = joint_angles
         else:
-            raise ValueError("Input should be 33-or-27-dimensional")
+            raise ValueError(f"Input should be 33-or-27-dimensional, now: {len(joint_angles)}")
         
         #===Adjust===
         processed_angles = self._preprocess_torch(subset_joints)

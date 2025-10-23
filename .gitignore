@@ -6,6 +6,7 @@ data/model/OpenSim/
 
 result/
 
+scripts/backup/
 
 #ignore py cache
 __pycache__/
