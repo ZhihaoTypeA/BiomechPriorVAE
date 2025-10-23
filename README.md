@@ -10,11 +10,15 @@ Contains the main python scripts for data convertion and model training, as well
 
 - **`b3dconverter.py`** - Convert the .b3d files into python-friendly numpy array.
 - **`datasetvisualize.py`** - Visualize the musculoskeletal model with specific posture using nimblephysics default 'Rajagopal' model. 
+- **`datasetvisualize_maro.py`** - Visualization with Maro's osim.
 - **`vaetrainer.py`** - VAE model trainer.
-- **`vaemodel.py`** - Interface for using VAE model in Matlab
+- **`vaemodel.py`** - Interface for using VAE model in Matlab.
 
-### 2.result
-Contains the VAE model trained using PyTorch and saved StandardScaler.
+### 2.data/model
+The Maro's osim file used in data visualization.
+
 
 ## Notes
 The dataset used in the project comes from AddBiomechanics dataset, which uses the default **'Rajagopal' model (37 DOFs)**, but for the optimal control, the model we used is **'gait3d_pelvis213' (33 DOFs)**, there are four wrist dofs are missing, thus the input dimension of VAE model is 33 instead of 37, and four wrist DOFs would be automatically filled by 0.0 when visualization is needed. **So please note whether the DOFs of musculoskeletal model match the VAE model**.
+
+Please pay attention to the placement path of the Matlab script files and the notes in the **README**. Make sure the corresponding files are included in the folder before running the Matlab scripts.
