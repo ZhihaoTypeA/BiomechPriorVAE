@@ -133,7 +133,7 @@ N = 50; % number of collocation nodes
 sym = 1; % do not simulate symmetric movement
 W.effMuscles = 0; % Weight of effort term in objective 1000
 W.effMusclesAct = 2.0e3 / 92;
-W.effMusclesTor = 1.0e3 / 10;
+W.effMusclesTor = 1.0e3 / 15;
 W.cot = 0; % 5.0e2 / 92 / 74.9646;
 W.effTorques = 0;    % Weight of torque term in objective
 W.reg        = 0; % Weight of regularization term in objective
@@ -198,7 +198,7 @@ Euler = 'BE'; % 'BE' Backward Euler or 'ME' Midpoint Euler discretization
 W.effMuscles = 0; % Weight of effort term  in objective, both effort terms are increased with a factor 10 because we are now making a prediction
 W.effTorques = 0;    % Weight of torque term  in objective
 W.effMusclesAct = 2.0e3 / 92;
-W.effMusclesTor = 1.0e3 / 10;
+W.effMusclesTor = 1.0e3 / 15;
 W.cot = 0; % 5.0e2 / 92 / 74.9646;
 W.reg        = 0;  % Weight of regularization term in objective
 W.track      = 0;     % Weight of tracking term in objective
@@ -284,4 +284,5 @@ end
 
 save(filenameStanding, 'standingJoints');
 save(filenameRunning, 'runningJoints');
+
 save(filenameCurvedRunning, 'curvedRunningJoints');
