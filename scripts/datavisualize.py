@@ -87,7 +87,7 @@ class PoseVisualizer:
     def animate_poses(self, joint_positions, port=8080):
         self.gui = nimble.NimbleGUI()
         self.gui.serve(port)
-        frame_time = 1.0/10.0
+        frame_time = 1.0/30.0
 
         try:
             while True:

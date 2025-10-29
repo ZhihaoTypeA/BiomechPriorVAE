@@ -9,7 +9,7 @@ The project focuses on generate more reasonable human lower body posture with pr
 Contains the main python scripts for data convertion and model training, as well as the interface for Matlab use.
 
 - **`b3dconverter.py`** - Convert the .b3d files into python-friendly numpy array.
-- **`datasetvisualize.py`** - Visualize the musculoskeletal model with specific posture using nimblephysics default 'Rajagopal' model. 
+- **`datasetvisualize.py`** - Visualize the musculoskeletal model with specific posture using nimblephysics default 'Rajagopal' model.
 - **`datasetvisualize_maro.py`** - Visualization with Maro's osim.
 - **`vaetrainer.py`** - VAE model trainer.
 - **`vaemodel.py`** - Interface for using VAE model in Matlab.

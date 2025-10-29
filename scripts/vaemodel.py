@@ -88,6 +88,10 @@ class VAEModelWrapper:
             if self.scaler.n_features_in_ != num_dofs:
                 raise ValueError(f"Scaler expects {self.scaler.n_features_in_} features, but VAE is configured for {num_dofs}")
 
+        # Define indices for subtalar and mtp joints that should be set to zero in the 27-dimensional joint vector (after removing 6 pelvis joints)
+        self.zero_joint_indices = [5, 6, 12, 13]
+        print(f"Will set joints at indices {self.zero_joint_indices} to zero (subtalar and mtp angles)")
+
     #Process data using scaler
     def _preprocess(self, joint_angles_subset):
         if len(joint_angles_subset) != self.num_dofs:
@@ -139,6 +143,12 @@ class VAEModelWrapper:
         full_joints[6:] = subset_joints
         return full_joints
 
+    def _set_joints_to_zero(self, joint_tensor):
+        #Set subtalar and mtp joints to zero
+        joint_tensor_zeroed = joint_tensor.clone()
+        joint_tensor_zeroed[self.zero_joint_indices] = 0.0
+        return joint_tensor_zeroed
+
     #Reconstruct the joint angle (without gradient), return the reconstruction error
     def reconstruct(self, joint_angles):
         joint_angles = torch.tensor(joint_angles, dtype=torch.float32, device=self.device)
@@ -150,6 +160,10 @@ class VAEModelWrapper:
             subset_joints = joint_angles
         else:
             raise ValueError("Input should be 33-or-27-dimensional")
+        
+        #Set subtalar and mtp joints to zero
+        subset_joints = self._set_joints_to_zero(subset_joints)
+
         processed_angles = self._preprocess_torch(subset_joints)
 
         x = torch.tensor(processed_angles, dtype=torch.float32, device=self.device).unsqueeze(0)
@@ -180,7 +194,7 @@ class VAEModelWrapper:
         rec_x = rec_x_batch.squeeze(0)
         recon_subset_tensor = self._postprocess_torch(rec_x)
         error = torch.norm(recon_subset_tensor - subset_joints)**2
-        error.backward()
+        error.backward(retain_graph=False)
         #===Adjust===
 
 

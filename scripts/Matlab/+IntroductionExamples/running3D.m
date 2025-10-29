@@ -159,7 +159,7 @@ if W.effTorques ~= 0
 end
 if W.effMusclesAct ~= 0
     weightsType = 'volumeweighted';
-    exponent_muscle = 2;
+    exponent_muscle = 3;
     speedWeighting = 1;
     problem.addObjective(@effortTermMusclesAct, W.effMusclesAct, weightsType, exponent_muscle, speedWeighting);
 end

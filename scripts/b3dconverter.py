@@ -1,6 +1,7 @@
 import nimblephysics as nimble
 import numpy as np
 from tqdm import tqdm
+import os
 
 #Convert original 37dof b3d file into numpy array
 class B3DConverter:
@@ -262,9 +263,10 @@ class Gait3dB3DConverter:
 
 
 if __name__ == "__main__":
-    b3d_file = "../data/Dataset/Hammer2013_Formatted_With_Arm/subject01/subject01.b3d"
+    root_path = os.path.dirname(os.path.dirname(__file__))
+    b3d_file = os.path.join(root_path, "data", "Dataset", "Hammer2013_Formatted_With_Arm", "subject01", "subject01.b3d")
     output_file = "joint_positions.npy"
-    geometry_path = "../data/Geometry/"
+    geometry_path = os.path.join(root_path, "data", "Geometry")
 
     #kinematic pass is 0
     processing_pass = 0
@@ -278,4 +280,6 @@ if __name__ == "__main__":
     converter.save_data(
         joint_pos, output_file
     )
+
+    print(f"shape: {joint_pos.shape}")
     

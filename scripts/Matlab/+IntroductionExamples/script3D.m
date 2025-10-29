@@ -35,7 +35,7 @@ resultFolder   = 'results/IntroductionExamples'; % Relative from the path of the
 
 % VAE Configuration
 %enable flag
-useVAE = true;
+useVAE = false;
 
 if useVAE
     vaeParams.modelPath = fullfile(filePath, 'BiomechPriorVAE_best.pth');
@@ -46,7 +46,7 @@ if useVAE
     vaeParams.latentDim = 20;
     vaeParams.hiddenDim = 512;
     vaeParams.device = 'cpu';
-    vaeParams.weight = 1e-1;
+    vaeParams.weight = 25;
 
     fprintf('VAE constraints enabled\n')
 else
@@ -80,6 +80,7 @@ model = Gait3d(modelFile);
 
 if useVAE
     standingVAE = vaeParams;
+    % standingVAE.weight = 1e-3;
     % Call IntroductionExamples.standing3D() to specify the optimizaton problem
     % => Have a look into it ;)
     problemStanding = IntroductionExamples.standing3D(model, resultFileStanding, standingVAE);
@@ -92,7 +93,6 @@ solver = IPOPT();
 
 % Change settings of the solver
 solver.setOptionField('tol', 1e-4); % 0.0000001
-solver.setOptionField('constr_viol_tol', 1e-3); % 0.000001
 solver.setOptionField('dual_inf_tol', 1e-4);
 solver.setOptionField('acceptable_tol', 1e-4); 
 
@@ -132,8 +132,8 @@ end
 N = 50; % number of collocation nodes
 sym = 1; % do not simulate symmetric movement
 W.effMuscles = 0; % Weight of effort term in objective 1000
-W.effMusclesAct = 2.0e3 / 92;
-W.effMusclesTor = 1.0e3 / 10;
+W.effMusclesAct = 1.0e3; %2.0e3 / 92;
+W.effMusclesTor = 1; %1.0e3 / 15;
 W.cot = 0; % 5.0e2 / 92 / 74.9646;
 W.effTorques = 0;    % Weight of torque term in objective
 W.reg        = 0; % Weight of regularization term in objective
@@ -193,12 +193,12 @@ targetdur_curve =  speedDurCurve.variables.mean{strcmp(speedDurCurve.variables.t
 
 % Simulation settings. We can use the same model as before.
 N = 50; % number of collocation nodes
-sym = 0; % do not simulate symmetric movement
+sym = 1; % do not simulate symmetric movement
 Euler = 'BE'; % 'BE' Backward Euler or 'ME' Midpoint Euler discretization
 W.effMuscles = 0; % Weight of effort term  in objective, both effort terms are increased with a factor 10 because we are now making a prediction
 W.effTorques = 0;    % Weight of torque term  in objective
-W.effMusclesAct = 2.0e3 / 92;
-W.effMusclesTor = 1.0e3 / 10;
+W.effMusclesAct = 1.0e3; %2.0e3 / 92;
+W.effMusclesTor = 1; %1.0e3 / 15;
 W.cot = 0; % 5.0e2 / 92 / 74.9646;
 W.reg        = 0;  % Weight of regularization term in objective
 W.track      = 0;     % Weight of tracking term in objective
