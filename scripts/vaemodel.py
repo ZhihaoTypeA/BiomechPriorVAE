@@ -90,7 +90,6 @@ class VAEModelWrapper:
 
         # Define indices for subtalar and mtp joints that should be set to zero in the 27-dimensional joint vector (after removing 6 pelvis joints)
         self.zero_joint_indices = [5, 6, 12, 13]
-        print(f"Will set joints at indices {self.zero_joint_indices} to zero (subtalar and mtp angles)")
 
     #Process data using scaler
     def _preprocess(self, joint_angles_subset):
@@ -162,7 +161,14 @@ class VAEModelWrapper:
             raise ValueError("Input should be 33-or-27-dimensional")
         
         #Set subtalar and mtp joints to zero
-        subset_joints = self._set_joints_to_zero(subset_joints)
+        # subset_joints = self._set_joints_to_zero(subset_joints)
+        scaling = torch.ones_like(subset_joints)
+        scaling[[5, 6, 12, 13]] = 0.0
+        scaling[[3, 10]] = -1.0
+        if len(joint_angles) == 27 * 2:
+            scaling[[5+27, 6+27, 12+27, 13+27]] = 0.0
+            scaling[[3+27, 10+27]] = -1.0
+        subset_joints = subset_joints * scaling
 
         processed_angles = self._preprocess_torch(subset_joints)
 
@@ -188,6 +194,15 @@ class VAEModelWrapper:
             raise ValueError(f"Input should be 33-or-27-dimensional, now: {len(joint_angles)}")
         
         #===Adjust===
+        # subset_joints = self._set_joints_to_zero(subset_joints)
+        scaling = torch.ones_like(subset_joints)
+        scaling[[5, 6, 12, 13]] = 0.0
+        scaling[[3, 10]] = -1.0
+        if len(joint_angles) == 27 * 2:
+            scaling[[5+27, 6+27, 12+27, 13+27]] = 0.0
+            scaling[[3+27, 10+27]] = -1.0
+        subset_joints = subset_joints * scaling
+
         processed_angles = self._preprocess_torch(subset_joints)
         x_batch = processed_angles.unsqueeze(0)
         rec_x_batch, mu, logvar = self.model.forward(x_batch)

@@ -12,8 +12,8 @@ if strcmp(option,'init')
     obj.objectiveInit.(fctname).idxJointsAllNodes = obj.idx.states(obj.model.extractState('q'), 1:obj.nNodes);
     obj.objectiveInit.(fctname).vaeParams = vaeParams;
 
-    %Indices for knee joint after removing pelvis (for flip)
-    obj.objectiveInit.(fctname).kneeIndices = [4, 11];
+    % %Indices for knee joint after removing pelvis (for flip)
+    % obj.objectiveInit.(fctname).kneeIndices = [4, 11];
     
     try
         py.sys.path().append(vaeParams.pythonPath);
@@ -43,7 +43,7 @@ end
 
 idxJointsAllNodes = obj.objectiveInit.(fctname).idxJointsAllNodes;
 vaeModule = obj.objectiveInit.(fctname).vaeModule;
-kneeIndices = obj.objectiveInit.(fctname).kneeIndices;
+% kneeIndices = obj.objectiveInit.(fctname).kneeIndices;
 
 if strcmp(option,'objval')
     totalCost = 0;
@@ -52,7 +52,7 @@ if strcmp(option,'objval')
         jointIndices = idxJointsAllNodes(7:33, nodeIdx);
         currentJoints = X(jointIndices);
         jointsForVAE = currentJoints;
-        jointsForVAE(kneeIndices) = -jointsForVAE(kneeIndices);
+        % jointsForVAE(kneeIndices) = -jointsForVAE(kneeIndices);
 
         try
             pyJoints = py.numpy.array(jointsForVAE);
@@ -74,7 +74,7 @@ elseif strcmp(option,'gradient')
         jointIndices = idxJointsAllNodes(7:33, nodeIdx);
         currentJoints = X(jointIndices);
         jointsForVAE = currentJoints;
-        jointsForVAE(kneeIndices) = -jointsForVAE(kneeIndices);
+        % jointsForVAE(kneeIndices) = -jointsForVAE(kneeIndices);
         
         try
             pyJoints = py.numpy.array(jointsForVAE);
